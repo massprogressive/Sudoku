@@ -25,10 +25,10 @@ class Board:
         """
         Creates board fulfilled zeros.
         """
-        add_board = [[[0 for x in range(self.block_width)]
-                         for y in range(self.block_height)]
-                         for z in range(self.num_blocks)]
-        return add_board
+        board = [[[0 for x in range(self.block_width)]
+                     for y in range(self.block_height)]
+                     for z in range(self.num_blocks)]
+        return board
 
     def set_board(self, board):
         """
@@ -44,9 +44,9 @@ class Board:
         self.vertical = lines
 
     def get_first_empty_block(self):
-        for block in range(9):
-            for row in range(3):
-                for col in range(3):
+        for block in range(self.block_num):
+            for row in range(self.block_height):
+                for col in range(self.block_width):
                     if self.board_block[block][row][col] == 0:
                         return block
 
@@ -255,7 +255,7 @@ class Board:
         Returns list of blocks with empty squeares
         """
         lst = []
-        for block in range(9):
+        for block in range(self.block_num):
             if len(self.get_moves_for_block(block)) > 0:
                 lst.append(block)
         return lst
