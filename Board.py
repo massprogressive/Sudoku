@@ -1,5 +1,6 @@
 from copy import deepcopy as dc
 from functions import *
+from global_variables import *
 
 
 class Board:
@@ -12,15 +13,11 @@ class Board:
         Creates board class with class with board
         fulfilled zeros.
         """
-        self.numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-        self.dimension = 3
-        self.vertical_blocks = [0, 3, 6]
-        self.horizontal_blocks = [0, 1, 2]
-        self.diagonal_blocks = [0, 4, 8]
-        self.board_block = [[[0 for x in range(self.dimension)]
-                             for y in range(self.dimension)]
-                            for z in range(self.dimension ** 2)]
-
+        self.numbers = NUMBERS
+        self.block_height = BLOCK_HEIGHT
+        self.block_width = BLOCK_WIDTH
+        self.num_blocks = NUM_BLOCKS
+        self.board_block = self.make_board()
         self.horizontal = None
         self.vertical = None
 
@@ -28,9 +25,9 @@ class Board:
         """
         Creates board fulfilled zeros.
         """
-        add_board = [[[0 for x in range(self.dimension)]
-                      for y in range(self.dimension)]
-                     for z in range(self.dimension ** 2)]
+        add_board = [[[0 for x in range(self.block_width)]
+                         for y in range(self.block_height)]
+                         for z in range(self.num_blocks)]
         return add_board
 
     def set_board(self, board):
@@ -48,17 +45,17 @@ class Board:
 
     def get_first_empty_block(self):
         for block in range(9):
-            for y in range(3):
-                for x in range(3):
-                    if self.board_block[block][y][x] == 0:
+            for row in range(3):
+                for col in range(3):
+                    if self.board_block[block][row][col] == 0:
                         return block
 
     def get_empty_blocks(self):
         result = []
-        for block in range(9):
-            for y in range(3):
-                for x in range(3):
-                    if self.board_block[block][y][x] == 0:
+        for block in range(self.block_num):
+            for row in range(self.block_height):
+                for col in range(self.block_width):
+                    if self.board_block[block][row][col] == 0:
                         if block not in result:
                             result.append(block)
         return result
@@ -70,9 +67,9 @@ class Board:
         """
         count = 0
         for block in self.board_block:
-            for y in range(3):
-                for x in range(3):
-                    if block[x][y] == 0:
+            for row in range(self.block_height):
+                for col in range(self.block_width):
+                    if block[col][row] == 0:
                         count += 1
         return count
 
@@ -83,10 +80,10 @@ class Board:
         :return: list of moves (row, column)
         """
         moves = []
-        for y in range(self.dimension):
-            for x in range(self.dimension):
-                if self.board_block[block_num][y][x] == 0:
-                    moves.append((y, x))
+        for row in range(self.block_height):
+            for col in range(self.block_width):
+                if self.board_block[block_num][row][col] == 0:
+                    moves.append((row, col))
         return moves
 
     def get_block_numbers(self, block_num):
@@ -97,37 +94,37 @@ class Board:
         :return: list of 'numbers not in block'
         """
         numbers = dc(self.numbers)
-        for y in range(self.dimension):
-            for x in range(self.dimension):
-                if self.board_block[block_num][y][x] in numbers:
-                    numbers.pop(numbers.index(self.board_block[block_num][y][x]))
+        for row in range(self.block_height):
+            for col in range(self.block_width):
+                if self.board_block[block_num][row][col] in numbers:
+                    numbers.pop(numbers.index(self.board_block[block_num][row][col]))
         return numbers
 
     def horizontal_lines(self):
         """
         Convert board in list of horizontal lines.
         """
-        for row in range(1, self.dimension):
-            one_of_three = []
-            for y in range(self.dimension):
+        for line in range(1, self.block_height):
+            result = []
+            for row in range(self.block_height):
                 lst = []
-                for block in range(self.dimension):
-                    for x in range(self.dimension):
-                        lst.append(self.board_block[block][y][x])
-                one_of_three.append(lst)
-            for y in range(self.dimension):
+                for block in range(self.block_height):
+                    for col in range(self.block_width):
+                        lst.append(self.board_block[block][row][col])
+                result.append(lst)
+            for row in range(self.block_height):
                 lst = []
-                for block in range(self.dimension, self.dimension * 2):
-                    for x in range(self.dimension):
-                        lst.append(self.board_block[block][y][x])
-                one_of_three.append(lst)
-            for y in range(self.dimension):
+                for block in range(self.block_height, self.block_height * 2):
+                    for col in range(self.block_width):
+                        lst.append(self.board_block[block][row][col])
+                result.append(lst)
+            for row in range(self.block_height):
                 lst = []
-                for block in range(self.dimension * 2, self.dimension ** 2):
-                    for x in range(self.dimension):
-                        lst.append(self.board_block[block][y][x])
-                one_of_three.append(lst)
-        self.horizontal = one_of_three
+                for block in range(self.block_height * 2, self.block_height ** 2):
+                    for col in range(self.block_width):
+                        lst.append(self.board_block[block][row][col])
+                result.append(lst)
+        self.horizontal = result
 
     def get_horizontal_line_numbers(self):
         """
@@ -149,26 +146,26 @@ class Board:
         Convert board in lists of vertical lines.
         (Looks like transposed matrix 9x9)
         """
-        one_of_three = []
-        for x in range(self.dimension):
+        result = []
+        for col in range(self.block_width):
             lst = []
             for block in [0, 3, 6]:
-                for y in range(self.dimension):
-                    lst.append(self.board_block[block][y][x])
-            one_of_three.append(lst)
-        for x in range(self.dimension):
+                for row in range(self.block_height):
+                    lst.append(self.board_block[block][row][col])
+            result.append(lst)
+        for col in range(self.block_width):
             lst = []
             for block in [1, 4, 7]:
-                for y in range(self.dimension):
-                    lst.append(self.board_block[block][y][x])
-            one_of_three.append(lst)
-        for x in range(self.dimension):
+                for row in range(self.block_height):
+                    lst.append(self.board_block[block][row][col])
+            result.append(lst)
+        for col in range(self.block_width):
             lst = []
             for block in [2, 5, 8]:
-                for y in range(self.dimension):
-                    lst.append(self.board_block[block][y][x])
-            one_of_three.append(lst)
-        self.vertical = one_of_three
+                for row in range(self.block_height):
+                    lst.append(self.board_block[block][row][col])
+            result.append(lst)
+        self.vertical = result
 
     def get_vertical_line_numbers(self):
         """
@@ -279,28 +276,33 @@ class Board:
         Creates string representation of board.
         """
         to_print = ''
-        for w in range(self.dimension):
-            for h in range(self.dimension):
+        for w in range(self.block_width):
+            for h in range(self.block_height):
                 to_print += str(self.board_block[h][w])
-                if h < self.dimension - 1:
+                if h < self.block_width - 1:
                     to_print += ' '
                 else:
                     to_print += '\n'
         to_print += ('-' * 29 + '\n')
-        for w in range(self.dimension):
-            for h in range(self.dimension, 6):
+        for w in range(self.block_width):
+            for h in range(self.block_height, 6):
                 to_print += str(self.board_block[h][w])
-                if h < self.dimension * 2 - 1:
+                if h < self.block_height * 2 - 1:
                     to_print += ' '
                 else:
                     to_print += '\n'
         to_print += ('-' * 29 + '\n')
-        for w in range(self.dimension):
-            for h in range(self.dimension * 2, self.dimension ** 2):
+        for w in range(self.block_width):
+            for h in range(self.block_height * 2, self.block_height ** 2):
                 to_print += str(self.board_block[h][w])
-                if h < self.dimension ** 2 - 1:
+                if h < self.block_height ** 2 - 1:
                     to_print += ' '
                 else:
                     to_print += '\n'
         return to_print
+
+
+
+
+
 

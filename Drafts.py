@@ -14,9 +14,9 @@ class Draft(Board):
         Check draft for possible moves
         """
         for block in self.board_block:
-            for y in range(3):
-                for x in range(3):
-                    if block[y][x] != 0:
+            for row in range(self.block_height):
+                for col in range(self.block_width):
+                    if block[row][col] != 0:
                         return True
         return False
 
@@ -26,10 +26,10 @@ class Draft(Board):
         :param block_num: block number
         """
         result = []
-        for y in range(3):
-            for x in range(3):
-                if self.board_block[block_num][y][x] != 0:
-                    result.append((y, x))
+        for row in range(self.block_height):
+            for col in range(self.block_width):
+                if self.board_block[block_num][row][col] != 0:
+                    result.append((row, col))
         return result
 
 

@@ -1,0 +1,4 @@
+NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+NUM_BLOCKS = 9
+BLOCK_HEIGHT = 3
+BLOCK_WIDTH = 3

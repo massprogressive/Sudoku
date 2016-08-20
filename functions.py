@@ -127,10 +127,6 @@ def last_digit_in_column(lines):
 def ninth_test(inst):
     from_horizontal = last_digit_in_row(inst.horizontal)
     from_vertical = last_digit_in_column(inst.vertical)
-    # print()
-    # print('Ninth test passed...')
-    # print(from_vertical + from_horizontal)
-    # print()
     for move in from_horizontal + from_vertical:
         inst.set_number(move[0], move[1], move[2], move[3])
     inst.horizontal_lines()
@@ -172,7 +168,6 @@ def calculate_common(data):
 
 
 def calculate_moves(data, common, key):
-    # numbers = list(data.keys())
     for move in common:
         for digit in data[key]:
             if move in data[key][digit]:
@@ -185,7 +180,6 @@ def parse_moves(data, board_inst):
         for digit in data[block]:
             if len(data[block][digit]) == 1:
                 board_inst.set_number(digit, block, data[block][digit][0][0], data[block][digit][0][1])
-                # print(digit, block, data[block][digit][0][0], data[block][digit][0][1])
 
 # *****************************************************
 # DOUBLES
@@ -204,8 +198,42 @@ def find_doubles(data):
                     repeated[(digit, dig)] = block_data[digit]
                     if len(list(repeated.keys())[0]) == len(list(repeated.values())[0]):
                         result[block] = repeated
-                        # print('result doubles', result)
     return result
+
+
+# *****************************************************
+# ANALYZING BOARD
+
+def ninth_test(board_inst):
+    """
+    Finding lines with 8 digits.
+    """
+    from_horizontal = last_digit_in_row(board_inst.horizontal)
+    from_vertical = last_digit_in_column(board_inst.vertical)
+    for move in from_horizontal + from_vertical:
+        board_inst.set_number(move[0], move[1], move[2], move[3])
+    board_inst.horizontal_lines()
+    board_inst.vertical_lines()
+    return board_inst
+
+
+def check_in_both_lines(board_inst):
+    """
+    Find out unique digit in horizontal-
+    vertical cross.
+    """
+    start = board_inst.get_first_empty_block()
+    if start is not None:
+        for block in range(start, 9):
+            moves = board_inst.get_moves_for_block(block)
+            for move in moves:
+                horizontal_line = board_inst.horizontal[block - (block % 3) + move[0]]
+                vertical_line = board_inst.vertical[(block % 3) * 3 + move[1]]
+                lines = [horizontal_line, vertical_line]
+                number = analyze_lines(lines)
+                if len(number) == 1:
+                    board_inst.set_number(number[0], block, move[0], move[1])
+    return board_inst
 
 
 # *****************************************************

@@ -1,5 +1,6 @@
 from Analyzer import analyzer
 from Drafts import Drafts
+from functions import *
 
 
 def move(board):
@@ -19,8 +20,8 @@ def move(board):
             if len(moves) == 1:
                 board.set_number(number, block_num, moves[0][0], moves[0][1])
     board.update()
-    analyzer.ninth_test(board)
-    analyzer.check_in_both_lines(board)
+    ninth_test(board)
+    check_in_both_lines(board)
     moves2 = board.get_moves_quantity()
     if moves1 == moves2:
         return False
